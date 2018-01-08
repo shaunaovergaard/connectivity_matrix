@@ -6,7 +6,6 @@ This code pulls in thickness mean and sd for a single subject, computes correlat
  #  Formula:
  #Z (i, j) = (μ (i) − μ  j  )/σ(j).
 
-# Input, this will be commented out so that the program can read in the .csv file with the measures of mean and standard deviation per each node.
 imu=2.344
 jmu=2.52
 isd=0.604
