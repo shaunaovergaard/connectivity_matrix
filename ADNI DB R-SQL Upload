@@ -1,0 +1,232 @@
+##  The following script installs RMySQL, which is a Database Interface (DBI) and 'MySQL' Driver for R: https://cran.r-project.org/web/packages/RMySQL/index.html 
+##  Notes: Password and user may need to be configured - /Library/WebServer/Documents/phpmyadmin/config.inc.php
+
+##  Diagnosis File contains: ADSXLIST.csv	 DXSUM_PDXCONV_ADNIALL.csv   BLCHANGE.csv
+
+##  Neuropsychological File contains: ADASSCORES.csv				GDSCALE.csv
+##  ADAS_ADNI1.csv				ITEM.csv  ADAS_ADNIGO23.csv			ITEM_DICT.csv  ADNI_CBBRESULTS.csv			MMSE.csv  
+##  **ADNI_Methods_UWNPSYCHSUM_20160112.pdf**	MOCA.csv    CCI.csv					MODHACH.csv  CDR.csv		NEUROBAT.csv   ECOGPT.csv				NPI.csv
+##  ECOGSP.csv				NPIQ.csv    FAQ.csv					UWNPSYCHSUM_02_22_17.csv     FCI.csv					UWNPSYCHSUM_DICT_02_23_17.csv
+
+##  Biospecimen File contains: APOERES.csv		APOERES_DICT.csv
+
+##  MR_Image_Analysis File contains: UCSFFSX51_08_01_16.csv		UCSFFSX51_11_02_15_V2.csv  MRINCLUSIO.csv
+
+install.packages('RMySQL') ##Installs RMySQL package
+require(RMySQL) ##Ensures that commands used reference the RMySQL package
+
+
+library(RMySQL)
+
+mydb = dbConnect(MySQL(), user='root', password='Courage!217', host='localhost')
+dbSendQuery(mydb, "CREATE DATABASE Diagnosis")
+dbSendQuery(mydb, "USE Diagnosis")
+
+conn<-dbConnect(RMySQL::MySQL(), host="localhost", dbname="Diagnosis", user="root", password="Courage!217") ##Establishes connection to local instance of MySQL DB
+setwd("/Users/shaunaovergaard/Dropbox (Personal)/2017/Dissertation/Paper1/Data/ADNI_dir/Diagnosis")
+##Build "Diagnosis" tables
+df<-read.csv("BLCHANGE.csv")
+dbWriteTable(conn,"BLCHANGE", df)
+df<-read.csv("ADSXLIST.csv")
+dbWriteTable(conn,"ADXLIST", df)
+df<-read.csv("DXSUM_PDXCONV_ADNIALL.csv")
+dbWriteTable(conn,"DXSUM_PDXCONV_ADNIALL", df)
+
+
+##Build "Neuropsychological" tables in DB
+##create "Neuropsychological" database using RMySQL in R
+mydb = dbConnect(MySQL(), user='root', password='Courage!217', host='localhost')
+dbSendQuery(mydb, "CREATE DATABASE Neuropsychological")
+dbSendQuery(mydb, "USE Neuropsychological")
+
+conn<-dbConnect(RMySQL::MySQL(), host="localhost", dbname="Neuropsychological", user="root", password="Courage!217") ##Establishes connection to local instance of MySQL DB
+setwd("/Users/shaunaovergaard/Dropbox (Personal)/2017/Dissertation/Paper1/Data/ADNI_dir/Neuropsychological")
+
+## create "ADASSCORES" table
+df<-read.csv("ADASSCORES.csv")
+dbWriteTable(conn,"ADASSCORES", df)
+
+## create "GDSCALE" table
+df<-read.csv("GDSCALE.csv")
+dbWriteTable(conn,"GDSCALE", df)
+
+## create "ADAS_ADNI1" table
+df<-read.csv("ADAS_ADNI1.csv")
+dbWriteTable(conn,"ADAS_ADNI1", df)
+
+## create "ADAS_ADNIGO23" table
+df<-read.csv("ADAS_ADNIGO23.csv")
+dbWriteTable(conn,"ADAS_ADNIGO23", df)
+
+## create "ITEM_DICT" table
+df<-read.csv("ITEM_DICT.csv")
+dbWriteTable(conn,"ITEM_DICT", df)
+
+## create "ADNI_CBBRESULTS" table
+df<-read.csv("ADNI_CBBRESULTS.csv")
+dbWriteTable(conn,"ADNI_CBBRESULTS", df) 
+
+## create "MMSE" table
+df<-read.csv("MMSE.csv")
+dbWriteTable(conn,"MMSE", df) 
+
+## create "MOCA" table
+df<-read.csv("MOCA.csv")
+dbWriteTable(conn,"MOCA", df)
+
+## create "CCI" table
+df<-read.csv("CCI.csv")
+dbWriteTable(conn,"CCI", df)
+
+## create "MODHACH" table
+df<-read.csv("MODHACH.csv")
+dbWriteTable(conn,"MODHACH", df)
+
+## create "CDR" table
+df<-read.csv("CDR.csv")
+dbWriteTable(conn,"CDR", df)
+
+## create "NEUROBAT" table
+df<-read.csv("NEUROBAT.csv")
+dbWriteTable(conn,"NEUROBAT", df)
+
+## create "ECOGPT" table
+df<-read.csv("ECOGPT.csv")
+dbWriteTable(conn,"ECOGPT", df)
+
+## create "NPI" table
+df<-read.csv("NPI.csv")
+dbWriteTable(conn,"NPI", df)
+
+## create "ECOGSP" table
+df<-read.csv("ECOGSP.csv")
+dbWriteTable(conn,"ECOGSP", df)
+
+## create "ECOGSP" table
+df<-read.csv("ECOGSP.csv")
+dbWriteTable(conn,"ECOGSP", df)
+
+## create "NPIQ" table
+df<-read.csv("NPIQ.csv")
+dbWriteTable(conn,"NPIQ", df)
+
+## create "FAQ" table
+df<-read.csv("FAQ.csv")
+dbWriteTable(conn,"FAQ", df)
+
+## create "UWNPSYCHSUM_02_22_17" table
+df<-read.csv("UWNPSYCHSUM_02_22_17.csv")
+dbWriteTable(conn,"UWNPSYCHSUM_02_22_17", df)
+
+## create "FCI" table
+df<-read.csv("FCI.csv")
+dbWriteTable(conn,"FCI", df)
+
+## create "UWNPSYCHSUM_DICT_02_23_17" table
+df<-read.csv("UWNPSYCHSUM_DICT_02_23_17.csv")
+dbWriteTable(conn,"UWNPSYCHSUM_DICT_02_23_17", df)
+
+######### Needs Fix ########
+
+## create "ITEM" table
+df<-read.csv("ITEM.csv")
+dbWriteTable(conn,"ITEM", df)
+
+###########################
+
+##Build "Biospecimen_Results" tables in DB
+##create "Biospecimen_Results" database using RMySQL in R
+mydb = dbConnect(MySQL(), user='root', password='Courage!217', host='localhost')
+dbSendQuery(mydb, "CREATE DATABASE Biospecimen_Results")
+dbSendQuery(mydb, "USE Biospecimen_Results")
+conn<-dbConnect(RMySQL::MySQL(), host="localhost", dbname="Biospecimen_Results", user="root", password="Courage!217") ##Establishes connection to local instance of MySQL DB
+
+## change working directory
+setwd("/Users/shaunaovergaard/Dropbox (Personal)/2017/Dissertation/Paper1/Data/ADNI_dir/Biospecimen_Results")
+
+## create "APOERES" table
+df<-read.csv("APOERES.csv")
+dbWriteTable(conn,"APOERES", df)
+
+## create "APOERES_DICT" table
+df<-read.csv("APOERES_DICT.csv")
+dbWriteTable(conn,"APOERES_DICT", df)
+
+#########################################
+
+##Build "MR_Image_Analysis" database using RMySQL in R
+mydb = dbConnect(MySQL(), user='root', password='Courage!217', host='localhost')
+dbSendQuery(mydb, "CREATE DATABASE MR_Image_Analysis")
+dbSendQuery(mydb, "USE MR_Image_Analysis")
+conn<-dbConnect(RMySQL::MySQL(), host="localhost", dbname="MR_Image_Analysis", user="root", password="Courage!217") ##Establishes connection to local instance of MySQL DB
+
+## change working directory
+setwd("/Users/shaunaovergaard/Dropbox (Personal)/2017/Dissertation/Paper1/Data/ADNI_dir/MR_Image_Analysis")
+
+## create "UCSFFSX_11_02_15" table
+df<-read.csv("UCSFFSX51_08_01_16.csv")
+dbWriteTable(conn,"UCSFFSX51_08_01_16", df)
+
+## create "UCSFFSX_DICT_08_01_14" table
+df<-read.csv("UCSFFSX51_DICT_08_01_14.csv")
+dbWriteTable(conn,"UCSFFSX51_DICT_08_01_14", df)
+
+## create "MRINCLUSIO" table
+df<-read.csv("MRINCLUSIO.csv")
+dbWriteTable(conn,"MRINCLUSIO", df)
+
+##  create "MAYOADIRL_MRI_FMRI_11_07_17" table
+df<-read.csv("MAYOADIRL_MRI_FMRI_11_07_17.csv")
+dbWriteTable(conn, "MAYOADIRL_MRI_FMRI_11_07_17", df)
+
+##  create "UCSFFSL51ALL_08_01_16" table
+df<-read.csv("UCSFFSL51ALL_08_01_16.csv")
+dbWriteTable(conn, "UCSFFSL51ALL_08_01_16", df)
+
+##  create "UCSFFSX_11_02_15" table
+df<-read.csv("UCSFFSX_11_02_15.csv")
+dbWriteTable(conn, "UCSFFSX_11_02_15", df)
+
+##  create "UCSFFSX51_08_01_16" table
+df<-read.csv("UCSFFSX51_ADNI1_3T_02_01_16.csv")
+dbWriteTable(conn, "UCSFFSX51_ADNI1_3T_02_01_16", df)
+
+
+#####################################
+
+##Build "Subject_Characteristics" database using RMySQL in R
+mydb = dbConnect(MySQL(), user='root', password='Courage!217', host='localhost')
+dbSendQuery(mydb, "CREATE DATABASE Subject_Characteristics")
+dbSendQuery(mydb, "USE Subject_Characteristics")
+conn<-dbConnect(RMySQL::MySQL(), host="localhost", dbname="Subject_Characteristics", user="root", password="Courage!217") ##Establishes connection to local instance of MySQL DB
+
+## change working directory
+setwd("/Users/shaunaovergaard/Dropbox (Personal)/2017/Dissertation/Paper1/Data/ADNI_dir/Subject_Characteristics")
+
+## create "PTDEMOG" table
+df<-read.csv("PTDEMOG.csv")
+dbWriteTable(conn,"PTDEMOG", df)
+
+######################################
+ ##Build "Detached" database using RMySQL in R
+dbSendQuery(mydb, "CREATE DATABASE Detached")
+dbSendQuery(mydb, "USE Detached")
+conn<-dbConnect(RMySQL::MySQL(), host="localhost", dbname="Detached", user="root", password="Courage!217") ##Establishes connection to local instance of MySQL DB
+
+## change working directory
+setwd("/Users/shaunaovergaard/Dropbox (Personal)/2017/Dissertation/Paper1/Data/ADNI_dir")
+##  create "adnimerge" table
+df<-read.csv("adnimerge.csv")
+dbWriteTable(conn,"adnimerge", df)
+
+## change working directory
+setwd("/Users/shaunaovergaard/Dropbox (Personal)/2017/Dissertation/Paper1/Data/ADNI_dir")
+##  create "ADNIMERGE_DICT" table
+df<-read.csv("ADNIMERGE_DICT.csv")
+dbWriteTable(conn,"ADNIMERGE_DICT", df)
+
+## change working directory
+setwd("/Users/shaunaovergaard/Dropbox (Personal)/2017/Dissertation/Methods")
+##  create "DMN_atlas" table
+df<-read.csv("DMN.csv")
+dbWriteTable(conn,"DMN_atlas", df)
