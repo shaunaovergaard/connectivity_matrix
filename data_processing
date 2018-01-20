@@ -1,4 +1,5 @@
 
+
 ########  
 ##  In the below we are trying to get as many processed scans as possible
 ##  Detached.ADNI_596 is a table that has already been screened for APOE4 status availability, as well as availability of 3T scans
@@ -12,7 +13,7 @@ library(ggplot2)
 #######################################################################
 
 dbDisconnect(con) # close connections prior to establishing new connection
-con<-dbConnect(RMySQL::MySQL(), host="localhost", dbname="Detached", user="root", password="Courage!217") ##Establishes connection to local instance of MySQL DB
+con<-dbConnect(RMySQL::MySQL(), host="localhost", dbname="Detached", user="root", password="fillinwpwd") ##Establishes connection to local instance of MySQL DB
 dbListTables(con) # lists tables within the "Detached" db. 
 
 ### this fetches- dim(d3) = 1395 468
@@ -48,13 +49,11 @@ dbListTables(con)
 
 #####
 ##  Select only the cases that = number 1 within the new d3$Order.by.group - these will be the first/baseline scans.
-##  Note: Will this present an issue of data integrity? Can we be absolutely certain that the clinical data (baseline)
-##  correspond to the scan?
 
 d5 <- d4[which(d4$Order.by.group=='1'),]
 dim(d5) #306 x 467
 
-write.csv(d5, '/Users/shaunaovergaard/Dropbox (Personal)/2017/Dissertation/Paper1/Data/n306/d5.csv', row.names=T)
+write.csv(d5, '/Users/shaunaovergaard/.......etc)
 
 #######
 ###################################################################################
@@ -151,9 +150,9 @@ coefficients(d5.vent.lm.dxbl)
 ############################################################################################################################################
 
 ##################################################################
-######### Create subgroup of CN vs. Patient #####################
+######### Create subgroup of AD vs. Patient #####################
 
-table(d5$DXStat_bl) #visualize CN vs. Patient grouping
+table(d5$DXStat_bl) #visualize AD vs. Patient grouping
 
 d5CN <- d5[which(d5$DXStat_bl=='CN'),]
 d5AD <- d5[which(d5$DXStat_bl=='Patient'),]
@@ -170,7 +169,7 @@ dim(d5AD)
 ##  The suffix "TA" refers to Thickness Average
 ##  The names of these variables are preserved as the original ADNI Image Analysis file
 
-mainvars<-c("RID", "ST113TA",
+mainvars<-c("RID", "ST113TA", ##Begins thickness average
             "ST111TA", 
             "ST103TA",
             "ST109TA", 
@@ -186,8 +185,7 @@ mainvars<-c("RID", "ST113TA",
             "ST36TA", 
             "ST34TA", 
             "ST14TA",
-            
-            "ST113TS",
+            "ST113TS", ##Begins thickness standard deviation
             "ST111TS",
             "ST103TS",
             "ST109TS",
@@ -209,292 +207,34 @@ mainvars<-c("RID", "ST113TA",
 ########################################################################################################################################
 #table(d5$DXStat_bl) #reminder of CN vs. Patient count
 
-d5CNmainvars <- d5CN[mainvars] #selecting only the variables corresponding to the "mainvars" list within the CN sample
-#dim(d5CNmainvars) #establishing dimensions, number of CN should match table
-#colnames(d5CNmainvars)
-d5CNmainvars <- d5CN[mainvars] #selecting only the variables that are listed in "mainvars" within the patient subgroup
-#dim(d5CNmainvars) #again, should match table Patient count here - (table(d5$DXStat_bl)   
-#head(d5CNmainvars)
-#colnames(d5CNmainvars)
+d5ADmainvars <- d5AD[mainvars] #selecting only the variables corresponding to the "mainvars" list within the AD sample
+#dim(d5ADmainvars) #establishing dimensions, number of AD should match table
+#colnames(d5ADmainvars)
+d5ADmainvars <- d5AD[mainvars] #selecting only the variables that are listed in "mainvars" within the patient subgroup
+
 #adjust data by expressing thickness of interest as a proportion of ICV (i.e. VOI/ICV)
-#head(subset(d5CNmainvars[,18:33]))
-d5CNtest<-((d5CNmainvars[,2:17] )/d5CN$ICV) #works but removes first column, rather than ignore first column in calculation and retaining first column in new set
+d5ADtest<-((d5ADmainvars[,2:17] )/d5AD$ICV) #works but removes first column, rather than ignore first column in calculation and retaining first column in new set
 #recode so as not to lose IDs during matrix division
 
-d5CNtest$RID<-d5CNmainvars$RID #works but adds id to the very end of the dataframe
-#colnames(d5CNtest)
-#head(d5CNtest)
-d5CNmainvars_adjusted <- d5CNtest[colnames(d5test)[c(17,1:16)]] #rearanges columns, placing id first
-#head(d5CNmainvars_adjusted)
+d5ADtest$RID<-d5ADmainvars$RID #works but adds id to the very end of the dataframe
 
-d5CNmainvars_adjusted_bound<-cbind(d5CNmainvars_adjusted, (subset(d5CNmainvars[,18:33]))) #add back TS (standard deviation of original thickness values)
-head(d5CNmainvars_adjusted_bound)
-#colnames(d5CNmainvars_adjusted_bound)
-#head(d5CNmainvars_adjusted_bound)
+d5ADmainvars_adjusted <- d5ADtest[colnames(d5ADtest)[c(17,1:16)]] #rearanges columns, placing id first
+#head(d5ADmainvars_adjusted)
+
+
+d5ADmainvars_adjusted_bound<-cbind(d5ADmainvars_adjusted, (subset(d5ADmainvars[,18:33]))) #add back TS (standard deviation of original thickness values)
+head(d5ADmainvars_adjusted_bound)
+#colnames(d5ADmainvars_adjusted_bound)
+#head(d5ADmainvars_adjusted_bound)
 
 
 #create file of d5ADmainvars_adjusted
-#write.csv(d5CNmainvars_adjusted, '/Users/shaunaovergaard/Dropbox (Personal)/2017/Dissertation/Paper1/Data/n306/subsamples/d5CNmainvars_adjusted.csv', row.names=T)
-#head(d5CNmainvars_adjusted_bound$RID)
-##  Now begin  - create this into a function/loop?
-#id2010<-t(subset.data.frame(d5CNmainvars_adjusted_bound[1,]))
-#t(subset.data.frame(d5CNmainvars_adjusted_bound))
-#View(id2010)
-#t(d5CNmainvars_adjusted_bound[1,])
-t(d5CNmainvars_adjusted_bound[1, 2:17]) #TA
-t(d5CNmainvars_adjusted_bound[1,18:33]) #TS
+#write.csv(d5ADmainvars_adjusted, '/Users/shaunaovergaard/Dropbox (Personal)/2017/Dissertation/Paper1/Data/n306/subsamples/d5ADmainvars_adjusted.csv', row.names=T)
+#head(d5ADmainvars_adjusted_bound$RID)
 
-rownames(t(d5CNmainvars_adjusted_bound[1, 2:17]) )#TA
-rownames(t(d5CNmainvars_adjusted_bound[1,18:33])) #TS
+t(d5ADmainvars_adjusted_bound[1, 2:17]) #TA
+t(d5ADmainvars_adjusted_bound[1,18:33]) #TS
 
-TATS2010<-cbind(t(d5CNmainvars_adjusted_bound[1, 2:17]), t(d5CNmainvars_adjusted_bound[1,18:33]) )
-dim(TATS2010)
-View(TATS2010)
-colnames(d5CNmainvars_adjusted_bound)
-TATS2010df<-data.frame(TATS2010)
-nodej<- c("rRAC",
-     "rPREC",
-     "rPHIP",
-     "rPCG",
-     "rMOF",
-     "rLOF",
-     "rIST",
-     "rCAC",
-     "lRAC",
-     "lPREC",
-     "lPHIP",
-     "lPCG",
-     "lMOF",
-     "lLOF",
-     "lIST",
-     "lCAC")
-TATS2010df$nodej<-nodej
-#View(TATS2010df)
-#now add new column that is nodei
+rownames(t(d5ADmainvars_adjusted_bound[1, 2:17]) )#TA
+rownames(t(d5ADmainvars_adjusted_bound[1,18:33])) #TS
 
-TATS2010df$nodei="rRAC" #make the whole column repeat "rRAC"
-View(TATS2010df)
-
-
-
-TATS2010df$imu<-TATS2010df[1,1] #make the whole column be item [1,1] which is first row, first column
-TATS2010df$isd<-TATS2010df[1,2] #make the whole column be item [1,2]
-#View(TATS2010df)
-#View(d5CNmainvars_adjusted_bound)
-#colnames(d5CNmainvars_adjusted_bound)
-
-##  Rename columns, then reorder
-colnames(TATS2010df)
-head(TATS2010df)
-
-colnames(TATS2010df) <- c("jmu","jsd",
-                            "nodej",
-                            "nodei",
-                            "imu",
-                            "isd")
-
-
-#colnames(TATS2010df[,c(1,2,3,4)]) #  perhaps wait until the end to reorder so that we can get 'nodepair' along the entire column
-
-TATS2010_rRAC<-TATS2010df
-dim(TATS2010_rRAC)
-
-## rPREC
-TATS2010df$nodei="rPREC"
-TATS2010df$imu<-TATS2010df[2,1] #make the whole column be item [1,1] which is first row, first column
-TATS2010df$isd<-TATS2010df[2,2] #make the whole column be item [1,2]
-head(TATS2010df)
-#dim(TATS2010df)
-TATS2010_rPREC<-TATS2010df
-dim(TATS2010_rPREC)
-head(TATS2010_rPREC)
-
-##  rPHIP
-TATS2010df$nodei="rPHIP"
-TATS2010df$imu<-TATS2010df[3,1] #make the whole column be item [1,1] which is first row, first column
-TATS2010df$isd<-TATS2010df[3,2] #make the whole column be item [1,2]
-head(TATS2010df)
-#dim(TATS2010df)
-TATS2010_rPHIP<-TATS2010df
-dim(TATS2010_rPHIP)
-head(TATS2010_rPHIP)
-
-## rPCG
-TATS2010df$nodei="rPCG"
-TATS2010df$imu<-TATS2010df[4,1] #make the whole column be item [1,1] which is first row, first column
-TATS2010df$isd<-TATS2010df[4,2] #make the whole column be item [1,2]
-head(TATS2010df)
-#dim(TATS2010df)
-TATS2010_rPCG<-TATS2010df
-dim(TATS2010_rPCG)
-head(TATS2010_rPCG)
-
-
-## rMOF
-TATS2010df$nodei="rMOF"
-TATS2010df$imu<-TATS2010df[5,1] #make the whole column be item [1,1] which is first row, first column
-TATS2010df$isd<-TATS2010df[5,2] #make the whole column be item [1,2]
-head(TATS2010df)
-#dim(TATS2010df)
-TATS2010_rMOF<-TATS2010df
-dim(TATS2010_rMOF)
-head(TATS2010_rMOF)
-
-
-
-## rLOF
-TATS2010df$nodei="rLOF"
-TATS2010df$imu<-TATS2010df[6,1] #make the whole column be item [1,1] which is first row, first column
-TATS2010df$isd<-TATS2010df[6,2] #make the whole column be item [1,2]
-head(TATS2010df)
-#dim(TATS2010df)
-TATS2010_rLOF<-TATS2010df
-dim(TATS2010_rLOF)
-head(TATS2010_rLOF)
-
-
-## rIST
-TATS2010df$nodei="rIST"
-TATS2010df$imu<-TATS2010df[7,1] #make the whole column be item [1,1] which is first row, first column
-TATS2010df$isd<-TATS2010df[7,2] #make the whole column be item [1,2]
-head(TATS2010df)
-#dim(TATS2010df)
-TATS2010_rIST<-TATS2010df
-dim(TATS2010_rIST)
-head(TATS2010_rIST)
-
-## rCAC
-TATS2010df$nodei="rCAC"
-TATS2010df$imu<-TATS2010df[8,1] #make the whole column be item [1,1] which is first row, first column
-TATS2010df$isd<-TATS2010df[8,2] #make the whole column be item [1,2]
-head(TATS2010df)
-#dim(TATS2010df)
-TATS2010_rCAC<-TATS2010df
-dim(TATS2010_rCAC)
-head(TATS2010_rCAC)
-
-## lLOF
-TATS2010df$nodei="lRAC"
-TATS2010df$imu<-TATS2010df[9,1] #make the whole column be item [1,1] which is first row, first column
-TATS2010df$isd<-TATS2010df[9,2] #make the whole column be item [1,2]
-head(TATS2010df)
-#dim(TATS2010df)
-TATS2010_lRAC<-TATS2010df
-##checks
-dim(TATS2010_lRAC)
-head(TATS2010_lRAC)
-TATS2010_lRAC[9,3] 
-
-
-## lPREC
-TATS2010df$nodei="lPREC"
-TATS2010df$imu<-TATS2010df[10,1] #make the whole column be item [1,1] which is first row, first column
-TATS2010df$isd<-TATS2010df[10,2] #make the whole column be item [1,2]
-head(TATS2010df)
-#dim(TATS2010df)
-TATS2010_lPREC<-TATS2010df
-##checks
-dim(TATS2010_lPREC)
-head(TATS2010_lPREC)
-TATS2010_lPREC[10,3] 
-
-
-
-## lPHIP
-TATS2010df$nodei="lPHIP"
-TATS2010df$imu<-TATS2010df[11,1] #make the whole column be item [1,1] which is first row, first column
-TATS2010df$isd<-TATS2010df[11,2] #make the whole column be item [1,2]
-head(TATS2010df)
-#dim(TATS2010df)
-TATS2010_lPHIP<-TATS2010df
-##checks
-dim(TATS2010_lPHIP)
-head(TATS2010_lPHIP)
-TATS2010_lPHIP[11,3] 
-
-
-## lPCG
-TATS2010df$nodei="lPCG"
-TATS2010df$imu<-TATS2010df[12,1] #make the whole column be item [1,1] which is first row, first column
-TATS2010df$isd<-TATS2010df[12,2] #make the whole column be item [1,2]
-#head(TATS2010df)
-#dim(TATS2010df)
-TATS2010_lPCG<-TATS2010df
-##checks
-dim(TATS2010_lPCG)
-head(TATS2010_lPCG)
-TATS2010_lPCG[12,3] 
-
-## lMOF
-TATS2010df$nodei="lMOF"
-TATS2010df$imu<-TATS2010df[13,1] #make the whole column be item [1,1] which is first row, first column
-TATS2010df$isd<-TATS2010df[13,2] #make the whole column be item [1,2]
-#head(TATS2010df)
-#dim(TATS2010df)
-TATS2010_lMOF<-TATS2010df
-##checks
-dim(TATS2010_lMOF)
-head(TATS2010_lMOF)
-TATS2010_lMOF[13,3] 
-
-## lLOF
-TATS2010df$nodei="lLOF"
-TATS2010df$imu<-TATS2010df[14,1] #make the whole column be item [1,1] which is first row, first column
-TATS2010df$isd<-TATS2010df[14,2] #make the whole column be item [1,2]
-#head(TATS2010df)
-#dim(TATS2010df)
-TATS2010_lLOF<-TATS2010df
-##checks
-dim(TATS2010_lLOF)
-head(TATS2010_lLOF)
-TATS2010_lLOF[14,3] 
-
-
-## lIST
-TATS2010df$nodei="lLIST"
-TATS2010df$imu<-TATS2010df[15,1] #make the whole column be item [1,1] which is first row, first column
-TATS2010df$isd<-TATS2010df[15,2] #make the whole column be item [1,2]
-#head(TATS2010df)
-#dim(TATS2010df)
-TATS2010_lIST<-TATS2010df
-##checks
-dim(TATS2010_lIST)
-head(TATS2010_lIST)
-TATS2010_lIST[15,3] 
-
-## lCAC
-TATS2010df$nodei="lCAC"
-TATS2010df$imu<-TATS2010df[16,1] #make the whole column be item [1,1] which is first row, first column
-TATS2010df$isd<-TATS2010df[16,2] #make the whole column be item [1,2]
-#head(TATS2010df)
-#dim(TATS2010df)
-TATS2010_lCAC<-TATS2010df
-##checks
-dim(TATS2010_lCAC)
-head(TATS2010_lCAC)
-TATS2010_lCAC[16,3] 
-
-
-#####
-
-TATS2010df$nodej
-
-newdf<-rbind(TATS2010_rRAC, 
-             TATS2010_rPREC,
-             TATS2010_rPHIP,
-             TATS2010_rPCG, 
-             TATS2010_rMOF,
-             TATS2010_rLOF,
-             TATS2010_rIST,
-             TATS2010_rCAC,
-             TATS2010_lRAC,
-             TATS2010_lPREC,
-             TATS2010_lPHIP,
-             TATS2010_lPCG,
-             TATS2010_lMOF,
-             TATS2010_lLOF,
-             TATS2010_lIST,
-             TATS2010_lCAC)
-dim(newdf)
-View(newdf)
-table(newdf$nodei)
