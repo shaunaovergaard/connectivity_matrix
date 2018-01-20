@@ -1,0 +1,500 @@
+##################  Needed Downloads ###############
+#install.packages("ggplot2")
+#install.packages("igraph")
+
+
+it<-NA
+for (thing in 1:72) {
+  #TATS2010<-cbind(t(d5ADmainvars_adjusted_bound[1, 2:17]), t(d5ADmainvars_adjusted_bound[1,18:33]) )
+  TATS2010<-cbind(t(d5ADmainvars_adjusted_bound[thing, 2:17]), t(d5ADmainvars_adjusted_bound[thing,18:33]) )
+  
+  #print(head(TATS2010))
+  #}
+
+  TATS2010df<-data.frame(TATS2010)
+  nodej<- c("rRAC",
+            "rPREC",
+            "rPHIP",
+            "rPCG",
+            "rMOF",
+            "rLOF",
+            "rIST",
+            "rCAC",
+            "lRAC",
+            "lPREC",
+            "lPHIP",
+            "lPCG",
+            "lMOF",
+            "lLOF",
+            "lIST",
+            "lCAC")
+  TATS2010df$nodej<-nodej
+
+  #now add new column that is nodei
+  
+  TATS2010df$nodei="rRAC" #make the whole column repeat "rRAC"
+  View(TATS2010df)
+  #print(head(TATS2010df))
+  #}
+  
+  TATS2010df$imu<-TATS2010df[1,1] #make the whole column be item [1,1] which is first row, first column
+  TATS2010df$isd<-TATS2010df[1,2] #make the whole column be item [1,2]
+
+  ##  Rename columns, then reorder
+  colnames(TATS2010df)
+  head(TATS2010df)
+  
+  colnames(TATS2010df) <- c("jmu","jsd",
+                            "nodej",
+                            "nodei",
+                            "imu",
+                            "isd")
+  
+  TATS2010_rRAC<-TATS2010df
+  dim(TATS2010_rRAC)
+  
+  ## rPREC
+  TATS2010df$nodei="rPREC"
+  TATS2010df$imu<-TATS2010df[2,1] 
+  TATS2010df$isd<-TATS2010df[2,2] 
+  head(TATS2010df)
+  #dim(TATS2010df)
+  TATS2010_rPREC<-TATS2010df
+  dim(TATS2010_rPREC)
+  head(TATS2010_rPREC)
+  
+  ##  rPHIP
+  TATS2010df$nodei="rPHIP"
+  TATS2010df$imu<-TATS2010df[3,1] 
+  TATS2010df$isd<-TATS2010df[3,2] 
+  head(TATS2010df)
+  #dim(TATS2010df)
+  TATS2010_rPHIP<-TATS2010df
+  dim(TATS2010_rPHIP)
+  head(TATS2010_rPHIP)
+  
+  ## rPCG
+  TATS2010df$nodei="rPCG"
+  TATS2010df$imu<-TATS2010df[4,1] 
+  TATS2010df$isd<-TATS2010df[4,2] 
+  head(TATS2010df)
+  #dim(TATS2010df)
+  TATS2010_rPCG<-TATS2010df
+  dim(TATS2010_rPCG)
+  head(TATS2010_rPCG)
+  
+  
+  ## rMOF
+  TATS2010df$nodei="rMOF"
+  TATS2010df$imu<-TATS2010df[5,1] 
+  TATS2010df$isd<-TATS2010df[5,2] 
+  head(TATS2010df)
+  #dim(TATS2010df)
+  TATS2010_rMOF<-TATS2010df
+  dim(TATS2010_rMOF)
+  head(TATS2010_rMOF)
+  
+  
+  ## rLOF
+  TATS2010df$nodei="rLOF"
+  TATS2010df$imu<-TATS2010df[6,1] 
+  TATS2010df$isd<-TATS2010df[6,2] 
+  #head(TATS2010df)
+  #dim(TATS2010df)
+  TATS2010_rLOF<-TATS2010df
+  #dim(TATS2010_rLOF)
+  #head(TATS2010_rLOF)
+  
+  
+  ## rIST
+  TATS2010df$nodei="rIST"
+  TATS2010df$imu<-TATS2010df[7,1] 
+  TATS2010df$isd<-TATS2010df[7,2] 
+  #head(TATS2010df)
+  #dim(TATS2010df)
+  TATS2010_rIST<-TATS2010df
+  #dim(TATS2010_rIST)
+  #head(TATS2010_rIST)
+  
+  ## rCAC
+  TATS2010df$nodei="rCAC"
+  TATS2010df$imu<-TATS2010df[8,1] 
+  TATS2010df$isd<-TATS2010df[8,2] 
+  head(TATS2010df)
+  #dim(TATS2010df)
+  TATS2010_rCAC<-TATS2010df
+  dim(TATS2010_rCAC)
+  head(TATS2010_rCAC)
+  
+  ## lLOF
+  TATS2010df$nodei="lRAC"
+  TATS2010df$imu<-TATS2010df[9,1] 
+  TATS2010df$isd<-TATS2010df[9,2] 
+  head(TATS2010df)
+  #dim(TATS2010df)
+  TATS2010_lRAC<-TATS2010df
+  ##checks
+  dim(TATS2010_lRAC)
+  head(TATS2010_lRAC)
+  TATS2010_lRAC[9,3] 
+  
+  
+  ## lPREC
+  TATS2010df$nodei="lPREC"
+  TATS2010df$imu<-TATS2010df[10,1] 
+  TATS2010df$isd<-TATS2010df[10,2] 
+  head(TATS2010df)
+  #dim(TATS2010df)
+  TATS2010_lPREC<-TATS2010df
+  ##checks
+  dim(TATS2010_lPREC)
+  head(TATS2010_lPREC)
+  TATS2010_lPREC[10,3] 
+  
+  
+  
+  ## lPHIP
+  TATS2010df$nodei="lPHIP"
+  TATS2010df$imu<-TATS2010df[11,1] 
+  TATS2010df$isd<-TATS2010df[11,2] 
+  head(TATS2010df)
+  #dim(TATS2010df)
+  TATS2010_lPHIP<-TATS2010df
+  ##checks
+  dim(TATS2010_lPHIP)
+  head(TATS2010_lPHIP)
+  TATS2010_lPHIP[11,3] 
+  
+  
+  ## lPCG
+  TATS2010df$nodei="lPCG"
+  TATS2010df$imu<-TATS2010df[12,1] 
+  TATS2010df$isd<-TATS2010df[12,2] 
+  #head(TATS2010df)
+  #dim(TATS2010df)
+  TATS2010_lPCG<-TATS2010df
+  ##checks
+  dim(TATS2010_lPCG)
+  head(TATS2010_lPCG)
+  TATS2010_lPCG[12,3] 
+  
+  ## lMOF
+  TATS2010df$nodei="lMOF"
+  TATS2010df$imu<-TATS2010df[13,1] 
+  TATS2010df$isd<-TATS2010df[13,2] 
+  #head(TATS2010df)
+  #dim(TATS2010df)
+  TATS2010_lMOF<-TATS2010df
+  ##checks
+  dim(TATS2010_lMOF)
+  head(TATS2010_lMOF)
+  TATS2010_lMOF[13,3] 
+  
+  ## lLOF
+  TATS2010df$nodei="lLOF"
+  TATS2010df$imu<-TATS2010df[14,1] 
+  TATS2010df$isd<-TATS2010df[14,2] 
+  #head(TATS2010df)
+  #dim(TATS2010df)
+  TATS2010_lLOF<-TATS2010df
+  ##checks
+  dim(TATS2010_lLOF)
+  head(TATS2010_lLOF)
+  TATS2010_lLOF[14,3] 
+  
+  
+  ## lIST
+  TATS2010df$nodei="lLIST"
+  TATS2010df$imu<-TATS2010df[15,1] 
+  TATS2010df$isd<-TATS2010df[15,2] 
+  #head(TATS2010df)
+  #dim(TATS2010df)
+  TATS2010_lIST<-TATS2010df
+  ##checks
+  dim(TATS2010_lIST)
+  head(TATS2010_lIST)
+  TATS2010_lIST[15,3] 
+  
+  ## lCAC
+  TATS2010df$nodei="lCAC"
+  TATS2010df$imu<-TATS2010df[16,1] 
+  TATS2010df$isd<-TATS2010df[16,2] 
+  #head(TATS2010df)
+  #dim(TATS2010df)
+  TATS2010_lCAC<-TATS2010df
+  ##checks
+  dim(TATS2010_lCAC)
+  head(TATS2010_lCAC)
+  TATS2010_lCAC[16,3] 
+  
+  
+  #####
+  
+  TATS2010df$nodej
+  
+  #print(head(TATS2010df))
+  
+  #}
+  
+  newdf<-rbind(TATS2010_rRAC, 
+               TATS2010_rPREC,
+               TATS2010_rPHIP,
+               TATS2010_rPCG, 
+               TATS2010_rMOF,
+               TATS2010_rLOF,
+               TATS2010_rIST,
+               TATS2010_rCAC,
+               TATS2010_lRAC,
+               TATS2010_lPREC,
+               TATS2010_lPHIP,
+               TATS2010_lPCG,
+               TATS2010_lMOF,
+               TATS2010_lLOF,
+               TATS2010_lIST,
+               TATS2010_lCAC)
+  dim(newdf)
+  View(newdf)
+  table(newdf$nodei)
+  newdf$nodepair<-c(1:256)
+  subj2010sc1<-newdf
+  head(subj2010sc1)
+  
+  #print(head(subj2010sc1))
+  #}
+  
+  
+  #write.csv(subj2010sc1, '/Users/shaunaovergaard/Dropbox (Personal)/2017/Dissertation/Paper1/Data/n306/trial/subj2010sc1.csv', row.names=T)
+  #dim(subj2010sc1)
+  #colnames(subj2010sc1)
+  test<-as.data.frame(subj2010sc1, rownames=TRUE)
+  
+  #View(testing2) #review data layout
+  ##this is based on the final file created using 'adding_sd.R'
+  adjacency_matrix<-function(csvfile){ #can input a csv file
+    imu=csvfile[,5] #the first column will be stored as imu (mean of node i)
+    jmu=csvfile[,1] #the second column will be stored as jmu (mean of node j)
+    isd=csvfile[,6] #the third column will be stored as isd (standard deviation of node i)
+    jsd=csvfile[,2] #the fourth column will be stored as jsd (standard deviation of node j)
+    Zij <- ((imu - jmu) / jsd) #computes z score of ij
+    Zji <- ((jmu - imu) / isd) #computes z score of ji
+    Cij <- ((abs(Zij))+(abs(Zji)))/2 #computes connectivity value for the z scores of ij and ji
+    #(or average... determine and document multiple ways as to how this can be manipulated)
+    #print(Cij)
+    return(Cij)}
+  
+  #################
+  
+  ## run function on dataset
+  dim(test)
+  mat<-adjacency_matrix(test)
+  
+  M_test <- matrix(data=mat, nrow=16)
+  M_test
+  dim(M_test)
+  
+  #print(head(M_test))
+  #}
+  
+  
+  rownames(M_test)<-c("rRAC",
+                      "rPREC",
+                      "rPHIP",
+                      "rPCG",
+                      "rMOF",
+                      "rLOF",
+                      "rIST",
+                      "rCAC",
+                      "lRAC",
+                      "lPREC",
+                      "lPHIP",
+                      "lPCG",
+                      "lMOF",
+                      "lLOF",
+                      "lIST",
+                      "lCAC")
+  
+  colnames(M_test)<-c("rRAC",
+                      "rPREC",
+                      "rPHIP",
+                      "rPCG",
+                      "rMOF",
+                      "rLOF",
+                      "rIST",
+                      "rCAC",
+                      "lRAC",
+                      "lPREC",
+                      "lPHIP",
+                      "lPCG",
+                      "lMOF",
+                      "lLOF",
+                      "lIST",
+                      "lCAC")
+  
+  ########
+  # Basics: heatmap visualization using default (guidance: http://www.sthda.com/english/wiki/ggplot2-quick-correlation-matrix-heatmap-r-software-and-data-visualization)
+  
+  library(reshape2)
+  conn_matrix<-M_test
+  melted_conn_matrix <- melt(conn_matrix)
+  head(melted_conn_matrix)
+  melted_conn_matrix
+  library(ggplot2)
+  ggplot(data = melted_conn_matrix, aes(x=Var1, y=Var2, fill=value)) + 
+    geom_tile()
+  
+  ####### Colormap using ggplot2 ##########
+  
+  library(reshape2)
+  #conn_matrix<-read.csv(file.choose())
+  conn_matrix<-M_test
+  melted_conn_matrix <- melt(conn_matrix, na.rm = TRUE)
+  ######
+  # Create ggheatmap
+  ggheatmap <- ggplot(melted_conn_matrix, aes(Var1, Var2, fill = value))+
+    # ggtitle("subj2010sc1")+
+    geom_tile(color = "blue")+
+    scale_fill_gradient2(low = "white", high = "blue", mid = "white", 
+                         #midpoint = 0.5, limit = c(0,1), 
+                         space = "Lab", 
+                         name="Structural Covariance") +
+    theme_minimal()+ # minimal theme
+    theme(axis.text.x = element_text(angle = 45, vjust = 1, 
+                                     size = 12, hjust = 1),
+          axis.text.y = element_text(vjust = 1, size = 12, hjust = 1))+
+    coord_fixed()
+  print(ggheatmap)
+  
+  range(melted_conn_matrix$value)
+  
+  ggheatmap + 
+    #geom_text(aes(Var1, Var2, label = value), color = "black", size = 1) +
+    
+    theme(
+      axis.title.x = element_blank(),
+      axis.title.y = element_blank(),
+      panel.grid.major = element_blank(),
+      panel.border = element_blank(),
+      axis.ticks = element_blank()
+      
+    )
+  
+  #########
+  
+  #conn_matrix
+  #range(conn_matrix*1000000)
+  conn_matrix_weights<-(conn_matrix*1000000)
+  #range(conn_matrix_weights)
+  testagain<-conn_matrix_weights
+  #
+  
+  testagain[ testagain > 0.2 ] <- 1
+  testagain[ testagain <0.3]<-0
+  conn_matrix_bin<-testagain
+  conn_matrix_bin
+  table(conn_matrix_bin)
+  
+  #print(head(conn_matrix_bin))
+  #}
+  
+  
+  library(igraph)
+
+    
+  efficiency <- function(g, type=c('local', 'nodal', 'global'), weights=NULL,
+                         use.parallel=TRUE, A=NULL) {
+    #stopifnot(is_igraph(g))
+    i <- NULL
+    if (is.null(weights) && 'weight' %in% edge_attr_names(g)) {
+      weights <- NULL
+    } else {
+      if (!is.null(weights) && any(!is.na(weights))) {
+        weights <- as.numeric(weights)
+      } else {
+        weights <- NA
+      }
+    }
+    
+    type <- match.arg(type)
+    if (type == 'local') {
+      if ('degree' %in% vertex_attr_names(g)) {
+        degs <- V(g)$degree
+      } else {
+        degs <- degree(g)
+      }
+      
+      if (is.null(weights)) {
+        if (is.null(A)) A <- as_adj(g, names=FALSE, attr='weight')
+        weighted <- TRUE
+      } else {
+        A <- as_adj(g, names=FALSE, sparse=FALSE)
+        weighted <- NULL
+      }
+      eff <- rep(0, length(degs))
+      nodes <- which(degs > 1)
+      X <- apply(A, 1, function(x) which(x > 0))
+      
+      if (length(nodes) > 0) {
+        if (isTRUE(use.parallel)) {
+          eff[nodes] <- foreach (i=nodes, .combine='c') %dopar% {
+            g.sub <- graph_from_adjacency_matrix(A[X[[i]], X[[i]]], mode='undirected', weighted=weighted)
+            efficiency(g.sub, 'global', weights=weights)
+          }
+        } else {
+          for (i in nodes) {
+            g.sub <- graph_from_adjacency_matrix(A[X[[i]], X[[i]]], mode='undirected', weighted=weighted)
+            eff[i] <- efficiency(g.sub, 'global', weights=weights)
+          }
+        }
+      }
+    } else {
+      Nv <- vcount(g)
+      eff <- apply(distances(g, weights=weights), 2, function(x)
+        sum(1 / x[x != 0]) / (Nv - 1))
+      if (type == 'global') eff <- sum(eff) / length(eff)
+    }
+    return(eff)
+  }
+  
+  #' @inheritParams efficiency
+  #' @export
+  #' @rdname efficiency
+  
+  
+  graph.efficiency <- function(g, type=c('local', 'nodal', 'global'), weights=NULL,
+                               use.parallel=TRUE, A=NULL) {
+    .Deprecated('efficiency')
+    efficiency(g, type=type, weights=weights, use.parallel=use.parallel, A=A)
+  }
+  
+  
+  
+  tested<-graph_from_adjacency_matrix(conn_matrix_weights, mode = "undirected", weighted = "TRUE")
+  plot(tested)
+  summary(tested)
+  E(tested)$weight
+  
+  tested<-graph_from_incidence_matrix(conn_matrix_bin)
+  plot(tested)
+  
+  tested1<-graph_from_adjacency_matrix(conn_matrix_bin)
+  plot(tested1)
+  efficiency(tested1, type = c('global'))
+  plot(tested1)
+  
+  
+  efficiency(tested1, type=c('nodal'))
+  efficiency(tested, type = c('global'))
+  
+  it[thing]<-c(efficiency(tested, type = c('global')))
+}
+
+it
+it2<-as.data.frame(it)
+head(it)
+
+it2$RID<-d5ADmainvars_adjusted_bound$RID
+it2
+summary(it2)
+
+write.csv(it2, '/Users/shaunaovergaard/.....etc.csv', row.names=T)
+
