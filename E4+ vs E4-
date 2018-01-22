@@ -1,0 +1,208 @@
+
+#d5CN$globeff<-CNit2$CNit
+#d5AD$globeff<-it2$it
+#dim(d5AD)
+#colnames(it2)
+#dim(it2)
+#d5AD<-read.csv(file.choose())
+#dim(d5AD)
+#colnames(d5AD)
+#d5AD.globeff.aov <- aov(globeff ~ APOE4Cat * PTEDUCAT + AGE + PTGENDER, d5AD)
+#summary(d5AD.globeff.aov)
+#coefficients(d2.hip.aov.dxbl)
+
+#write.csv(d5AD, '/Users/shaunaovergaard/Dropbox (Personal)/2017/Dissertation/Paper1/Data/n306/trial/d5ADwglob.csv', row.names=T)
+#write.csv(d5CN, '/Users/shaunaovergaard/Dropbox (Personal)/2017/Dissertation/Paper1/Data/n306/trial/d5CNwglob.csv', row.names=T)
+#check<-read.csv(file.choose())
+#dim(check)
+#colnames(check)
+#check1<-check[,-1]
+#colnames(check1)
+#head(d5AD)
+#d5ADCN<-rbind(d5AD, check1) #combine AD and CN subjects
+#d5CN<-check1
+
+
+d5CN.globeff.aov <- aov(globeff ~ PTEDUCAT + APOE4Cat + AGE + PTGENDER, d5CN)
+d5AD.globeff.aov <- aov(globeff ~ PTEDUCAT + APOE4Cat + AGE + PTGENDER, d5AD)
+
+
+table(d5ADCN$APOE4Cat)
+
+summary(d5CN.globeff.aov)
+summary(d5AD.globeff.aov)
+
+d5ADCN.globeff.aov <- aov(PTEDUCAT ~ DXStat_bl + APOE4Cat + globeff + AGE + PTGENDER, d5ADCN)
+summary(d5ADCN.globeff.aov)
+
+colnames(d5ADCN)
+table(d5ADCN$DXStat_bl)
+d5ADCN$APOE4Cat
+View(d5ADCN)
+
+d5ADCNeneg<-d5ADCN[which(d5ADCN$APOE4Cat=='Non-Carrier'),]
+d5ADCNepos<-d5ADCN[which(d5ADCN$APOE4Cat=='Carrier'),]
+d5ADCNeneg
+dim(d5ADCNepos)
+dim(d5ADCNeneg)
+colnames(d5ADCNeneg)
+d5ADCNeneg.globeff.aov <- lm(PTEDUCAT ~ globeff + AGE + as.factor(PTGENDER), d5ADCNeneg)
+summary(d5ADCNeneg.globeff.aov)
+
+d5ADCNepos.globeff.aov <- lm(PTEDUCAT ~ globeff + AGE + as.factor(PTGENDER), d5ADCNepos)
+summary(d5ADCNepos.globeff.aov)
+
+colnames(d5ADCNeneg)
+summary(d5ADCNeneg$APO4Cat)
+
+install.packages('RCurl')
+library('RCurl')
+require(RCurl)
+
+install.packages('prettyR')
+library('prettyR')
+require(prettyR)
+
+describe(d5ADCNeneg)
+install.packages('caret')
+library(caret)
+require(caret)
+
+
+#####################################################################################################
+#################### Begin Cross-validation using APOE E negative sample ############################
+#####################################################################################################
+## Very helpful resource, most of skeleton derived from here: https://rpubs.com/malshe/212816 #######
+#####################################################################################################
+
+k=10
+set.seed(100)
+d5ADCNeneg$CV_Group1 <- sample(1:k,nrow(d5ADCNeneg),replace = T)
+table(d5ADCNeneg$CV_Group1)
+
+r <- rep(1:k,times = nrow(d5ADCNeneg)%/%k)
+r <- if(nrow(d5ADCNeneg)%%k != 0){append(r,seq(1,nrow(d5ADCNeneg)%%k))} else{r}
+set.seed(100)
+
+d5ADCNeneg$CV_Group2 <- sample(r,nrow(d5ADCNeneg),replace = F)
+
+table(d5ADCNeneg$CV_Group2)
+
+
+d5ADCNeneg.globeff.aov <- lm(PTEDUCAT ~ globeff + AGE + as.factor(PTGENDER), d5ADCNeneg)
+summary(d5ADCNeneg.globeff.aov)
+
+
+
+MSE <- rep(NA,k) 
+nk <- rep(NA,k)
+for (i in 1:k){
+  model <- lm(PTEDUCAT ~ globeff + AGE + as.factor(PTGENDER), d5ADCNeneg[d5ADCNeneg$CV_Group2 != i,])
+  p <- predict.lm(model,newdata = d5ADCNeneg[d5ADCNeneg$CV_Group2 == i,])
+  MSE[i] <- mean((d5ADCNeneg[d5ADCNeneg$CV_Group2 == i,"PTEDUCAT"]-p)^2)
+  nk[i] <- nrow(d5ADCNeneg[d5ADCNeneg$CV_Group2 == i,])
+}
+
+
+MSE_CVeneg <- sum(MSE*(nk/nrow(d5ADCNeneg)))
+print(MSE_CVeneg)
+MSEeneg<-MSE
+print(MSEeneg)
+############################################################################################
+
+
+k=10
+set.seed(100)
+d5ADCNenpos$CV_Group1 <- sample(1:k,nrow(d5ADCNenpos),replace = T)
+table(d5ADCNenpos$CV_Group1)
+
+r <- rep(1:k,times = nrow(d5ADCNepos)%/%k)
+r <- if(nrow(d5ADCNepos)%%k != 0){append(r,seq(1,nrow(d5ADCNepos)%%k))} else{r}
+set.seed(100)
+
+d5ADCNepos$CV_Group2 <- sample(r,nrow(d5ADCNepos),replace = F)
+
+table(d5ADCNepos$CV_Group2)
+
+
+d5ADCNepos.globeff.aov <- lm(PTEDUCAT ~ globeff + AGE + as.factor(PTGENDER), d5ADCNepos)
+summary(d5ADCNepos.globeff.aov)
+
+
+
+MSE <- rep(NA,k) 
+nk <- rep(NA,k)
+for (i in 1:k){
+  model <- lm(PTEDUCAT ~ globeff + AGE + as.factor(PTGENDER), d5ADCNepos[d5ADCNepos$CV_Group2 != i,])
+  p <- predict.lm(model,newdata = d5ADCNepos[d5ADCNepos$CV_Group2 == i,])
+  MSE[i] <- mean((d5ADCNepos[d5ADCNepos$CV_Group2 == i,"PTEDUCAT"]-p)^2)
+  nk[i] <- nrow(d5ADCNepos[d5ADCNepos$CV_Group2 == i,])
+}
+
+MSE_CVepos <- sum(MSE*(nk/nrow(d5ADCNepos)))
+print(MSE_CVepos)
+MSEepos<-MSE
+print(MSEepos)
+
+
+##########################################################################################
+######################## Bootstrapping to determine difference between MSEs ##############
+##########################################################################################
+##  'boot' package manual: https://cran.r-project.org/web/packages/boot/boot.pdf #########
+## Helpful R discussion, most of coded derived here: 
+##  https://stats.stackexchange.com/questions/136661/using-bootstrap-under-h0-to-perform-a-test-for-the-difference-of-two-means-repl
+##########################################################################################
+
+
+detach(total1)
+rm(total)
+MSEeneg
+MSEepos
+total<-c(MSEeneg, MSEepos)
+total
+
+total1<-(data.frame((total)))
+View(total1)
+
+total1$e4index<-c(1,1,1,1,1,1,1,1,1,1,2,2,2,2,2,2,2,2,2,2)
+
+x <- MSEeneg
+y <- MSEepos
+
+t.test(x,y)
+
+boot.t<-NA
+pooled <- c(x,y)
+for (i in 1:10000){
+  sample.index <- sample(c(1:length(pooled)),replace=TRUE)
+  sample.x <- pooled[sample.index][1:length(x)]
+  sample.y <- pooled[sample.index][-c(1:length(y))]
+  boot.t[i] <- t.test(sample.x,sample.y)$statistic
+}
+p.pooled <-  (1 + sum(abs(boot.t) > abs(t.test(x,y)$statistic))) / (10000+1) 
+p.pooled
+
+#######################################################################################
+
+
+# sample from H0 separately, no assumption about equal variance
+xt <- x - mean(x) + mean(pooled) #
+yt <- y - mean(y) + mean(pooled)
+
+boot.t <- c(1:10000)
+for (i in 1:10000){
+  sample.x <- sample(xt,replace=TRUE)
+  sample.y <- sample(yt,replace=TRUE)
+  boot.t[i] <- t.test(sample.x,sample.y)$statistic
+}
+p.h0 <-  (1 + sum(abs(boot.t) > abs(t.test(x,y)$statistic))) / (10000+1)  # 
+p.h0
+
+
+#######################################################################################
+
+
+
+
+
+
